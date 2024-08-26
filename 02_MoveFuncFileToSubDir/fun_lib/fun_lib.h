@@ -1,1 +1,1 @@
-void printHello();
+void printMessage();

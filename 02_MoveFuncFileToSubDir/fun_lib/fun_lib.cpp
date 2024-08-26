@@ -1,8 +1,8 @@
 #include <iostream>
 #include "fun_lib.h"
 
-void printHello(){
-    std::cout << "Hello CMake from Lib!!" << std::endl;
+void printMessage(){
 
+    std::cout << "Moved Source files to sub-directories!!" << std::endl;
     return;
 }
