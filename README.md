@@ -24,9 +24,12 @@ target_link_libraries(Executable PUBLIC Library)
     target_include_directories(Library PUBLIC "./") # is used for including headers
 - add add_subdirectory(lib) in CMakeLists.txt of parent directory
 
+Note: every sub-diretory needs to have CMakeLists.txt
+if a sub directory has just folders no source files.. add only add_subdirectories to CMakeLists.txt
+Executable will go to directory having file with main func
+
 ## Add Variables to CMakeLists.txt
 ```
 set(EXECUTABLE_NAME Executable)
 set(LIBRARY_NAME Library)
 ```
-
