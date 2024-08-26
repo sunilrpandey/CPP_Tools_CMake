@@ -3,6 +3,6 @@
 
 void printMessage(){
 
-    std::cout << "Moved Source files to sub-directories!!" << std::endl;
+    std::cout << "Lib & Exes name are now taken from top CMakelists.txt!!" << std::endl;
     return;
 }

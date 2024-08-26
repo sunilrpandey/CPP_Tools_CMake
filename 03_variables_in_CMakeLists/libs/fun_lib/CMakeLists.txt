@@ -1,2 +1,2 @@
-add_library(Library STATIC fun_lib.cpp)
-target_include_directories(Library PUBLIC "./")
+add_library(${LIB_NAME} STATIC fun_lib.cpp)
+target_include_directories(${LIB_NAME} PUBLIC "./")
