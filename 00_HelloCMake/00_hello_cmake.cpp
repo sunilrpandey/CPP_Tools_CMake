@@ -1,7 +1,7 @@
 #include <iostream>
 
 void printHello(){
-    std::cout << "Hello CMake from Lib!!" << std::endl;
+    std::cout << "Hello CMake!!" << std::endl;
 
     return;
 }
