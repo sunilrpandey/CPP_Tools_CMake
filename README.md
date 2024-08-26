@@ -100,3 +100,18 @@ variable values from CMakeLists.txt
 change variable/option value temporarely 
 
 you can also get these variable/options value by searching "cmake cache" in command pallete(ctrl shift p)
+
+How to generate automatic headers
+create config.h.in (.in means file to be copied somewhere) in configured folder and copy 
+```
+configure_file(
+    "config.h.in"
+    "${CMAKE_BINARY_DIR}/configured_files/include/config.h" ESCAPE_QUOTES
+)
+in CMakeLists.txt
+```
+config.h.in will have content to be copied and have some text to be replaced by cmake config
+```
+static constexpr std::int32_t project_version_major{@PROJECT_VERSION_MAJOR@};
+string between @@ to be replaced
+```
