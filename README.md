@@ -1,7 +1,7 @@
 
 # CMake Step by Step
 
-## Hello CMake
+## 01. Hello CMake
 Let us assume we have just one implementation (.cpp).  The two basic things that is required for any project is 
 - CMake Version 
 - Project detail
@@ -15,14 +15,14 @@ add_executable(Executable hello_cmake.cpp)
 #or
 add_library(Library STATIC func_lib.cpp)
 ```
-So here is complete make file which build .cpp file to executable
+So here is complete CMakeLists.txt which builds .cpp file with main to executable
 ```bash
 cmake_minimum_required(VERSION 3.16)
 project(CppCMakeLearning VERSION 1.0.0 LANGUAGES C CXX)
 
 add_executable(Executable hello_cmake.cpp)
 ```
-### Build and generate executable/library
+### 02. Build and generate executable/library
 Create Build directory, change directory to build and run cmake
 ```bash
     mkdir build
@@ -33,101 +33,106 @@ Create Build directory, change directory to build and run cmake
 ```
 this will generate executable .exe or lib(.lib/.a)
 
-## Say we have an executable which depends on a library and we have segregated library and executable code in different .h/.cpp
+## 03. When Executable depends on a library (or other implementation file) in same directory 
+Suppose we have an executable which depends on a library and we have segregated library and executable code in different .h/.cpp
 add implementation to my_lib.h/.cpp
 
 ```bash
-#create library
-add_library(Library STATIC my_lib.cpp)
+    #create library
+    add_library(Library STATIC my_lib.cpp)
 
-#create executable
-add_executable(Executable learning.cpp)
+    #create executable
+    add_executable(Executable main.cpp)
 
-#but executable depends on library therefore link the library/ies to executable
-target_link_libraries(Executable PUBLIC Library)
+    #but executable depends on library therefore link the library/ies to executable
+    target_link_libraries(Executable PUBLIC Library)
 ```
-## Move impl file group to separate folder (my_lib)
-- create my_lib folder.
-- go my_lib filder and create another CMakeLists.text file
+
+Sometimes you dont want a separate library file, you can do above in a single line if you dont want library
+
+```bash
+    add_executable(Executable 01_move_funcs_to_separate_files.cpp fun_lib.cpp)
+```
+
+## 04. When Library code is in a separate folder (e.g. my_lib)
+- Create my_lib folder and add add_subdirectory(my_lib) in CMakeLists.txt of current directory
+- Go my_lib filder and create another CMakeLists.text file with below content
+```bash
     add_library(Library STATIC "fun_lib.cpp")
     target_include_directories(Library PUBLIC "./") # is used for including headers
-- add add_subdirectory(lib) in CMakeLists.txt of parent directory
-
-Note: every sub-diretory needs to have CMakeLists.txt
-if a sub directory has just folders no source files.. add only add_subdirectories to CMakeLists.txt
+```
+Note: Every sub-diretory needs to have CMakeLists.txt. If a sub directory has just folders no source files.. add list of add_subdirectory(dir_name) to CMakeLists.txt.
 Executable will go to directory having file with main func
 
-if headers/source are in separte folders say include/source folder, CMakeLists.txt from include will have 
+## 05. When Headers/source files are kept in separate folder (e.g. src/ include/)
+If headers/source are in separte folders say include/src folder, CMakeLists.txt from 'include' directory will have 
+```bash
+    target_include_directories(${LIBRARY_NAME} PUBLIC "./")
 ```
-target_include_directories(${LIBRARY_NAME} PUBLIC "./")
-```
-and  CMakeLists.txt from include will have 
-```
-add_library(${LIBRARY_NAME} STATIC "my_lib.cc")
+and  CMakeLists.txt from 'source'' will have 
+```bash
+    add_library(${LIBRARY_NAME} STATIC "my_lib.cc")
+
+    #if you have executable impl file in same src folder
+    add_executable({EXE_NAME} app.cpp)
+    target_link_libraries({EXE_NAME} PUBLIC {LIBRARY_NAME})
 ```
 
+## 06. Add Variables to CMakeLists.txt
+You can add project specific variables 
+```bash
+    set(EXECUTABLE_NAME Executable)
+    set(LIBRARY_NAME Library)
+```
+You are supposed to initialize various pre-defined cpp variables
 
-## Add Variables to CMakeLists.txt
-```
-set(EXECUTABLE_NAME Executable)
-set(LIBRARY_NAME Library)
-
-
-```
-cpp variables
-
-```
-set(CMAKE_CXX_STANDARD          17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS        OFF)
-```
-Options
-```
-option(COMPILE_EXECUTABLE "Whether to compile the executable" ON)
+```bash
+    set(CMAKE_CXX_STANDARD          17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS        OFF)
 ```
 
-How we use options
-```
-option(COMPILE_EXECUTABLE "Whether to compile the executable" OFF)
-if (COMPILE_EXECUTABLE)
-    add_subdirectory(app)
-else()
-    message("Without exe compiling")
-endif()
+## 07. Options in CMakeLists.txt
 
-```
-to make COMPILE_EXECUTABLE ON  we can do this while configuring from build folder
-```
-cd build
-# cmake -DMY_OPTION=[ON|OFF] ..
-cmake .. -DCOMPILE_EXECUTABLE
+```bash
+    option(COMPILE_EXECUTABLE "Whether to compile the executable" ON) 
 ```
 
-How to do automatic clean of build directory
+How we use options:  Options can be used for conditional build
+```bash
+    option(COMPILE_EXECUTABLE "Whether to compile the executable" OFF)
+    if (COMPILE_EXECUTABLE)
+        add_subdirectory(app)
+    else()
+        message("Without exe compiling")
+    endif()
+```
+You can change option by editing CMakeLists.txt or while configuring from build folder
+```bash
+    cd build
+    # cmake -DMY_OPTION=[ON|OFF] ..
+    cmake .. -DCOMPILE_EXECUTABLE=ON
+```
+
+## 08. How to do automatic clean of build directory
 - create MakeFile close to CMakeLists.txt and add below bash command with target
+```bash
+    prepare:
+        rm -rf build
+        mkdir build
+        cd build
 ```
-prepare:
-	rm -rf build
-	mkdir build
-	cd build
+and run from command line
+```bash
+    make prepare
 ```
-and run 
+## 09. How to build in Release/Debug mode? 
+```bash
+    cd build
+    # -D Works for variable name as well(besides options)
+    cmake -DCMAKE_BUILD_TYPE=Release ..
 ```
-make prepare
-```
-from command line
-
-How to build in Release/Debug mode? 
-```
-cd build
-# -D Works for variable name as well
-cmake -DCMAKE_BUILD_TYPE=Release ..
-```
-
-CMakeCache.txt
-variable values from CMakeLists.txt
-change variable/option value temporarely 
-
+Note: To debug, one can change variables/options temporarily in 'CMakeCache.txt'
 you can also get these variable/options value by searching "cmake cache" in command pallete(ctrl shift p)
 
 How to generate automatic headers
