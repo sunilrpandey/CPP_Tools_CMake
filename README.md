@@ -135,17 +135,18 @@ and run from command line
 Note: To debug, one can change variables/options temporarily in 'CMakeCache.txt'
 you can also get these variable/options value by searching "cmake cache" in command pallete(ctrl shift p)
 
-How to generate automatic headers
-create config.h.in (.in means file to be copied somewhere) in configured folder and copy 
+# 10. How to generate automatic headers
+create config.h.in (.in means file to be copied somewhere) in 'configured' folder and copy 
+```bash 
+    configure_file(
+        "config.h.in"
+        "${CMAKE_BINARY_DIR}/configured_files/include/config.h" ESCAPE_QUOTES
+    )
 ```
-configure_file(
-    "config.h.in"
-    "${CMAKE_BINARY_DIR}/configured_files/include/config.h" ESCAPE_QUOTES
-)
-in CMakeLists.txt
+in 'CMakeLists.txt'. On configuration, config.h.in which has content to be copied and have some text to be replaced will be resulting config.h at 
+"build\configured_files\include\config.h"
+Please not text between @@ to be replaced based on project detail in CMakeLists.txt
 ```
-config.h.in will have content to be copied and have some text to be replaced by cmake config
-```
-static constexpr std::int32_t project_version_major{@PROJECT_VERSION_MAJOR@};
-string between @@ to be replaced
+    static constexpr std::int32_t project_version_major{@PROJECT_VERSION_MAJOR@};
+    string between @@ to be replaced
 ```
