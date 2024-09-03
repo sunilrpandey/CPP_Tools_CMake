@@ -1,20 +1,49 @@
 
 # CMake Step by Step
-## Tips
 
-## When you have just one impl file 
+## Hello CMake
+Let us assume we have just one implementation (.cpp).  The two basic things that is required for any project is 
+- CMake Version 
+- Project detail
+```bash
+cmake_minimum_required(VERSION 3.16)
+project(CppCMakeLearning VERSION 1.0.0 LANGUAGES C CXX)
+```
+Once header is set add you need to specify if  you want executable or library out of your project
+```bash
+add_executable(Executable hello_cmake.cpp)
+#or
+add_library(Library STATIC func_lib.cpp)
+```
+So here is complete make file which build .cpp file to executable
 ```bash
 cmake_minimum_required(VERSION 3.16)
 project(CppCMakeLearning VERSION 1.0.0 LANGUAGES C CXX)
 
-add_executable(Executable learning.cpp)
+add_executable(Executable hello_cmake.cpp)
 ```
-## Add impl to separate file .h/.cpp
+### Build and generate executable/library
+Create Build directory, change directory to build and run cmake
+```bash
+    mkdir build
+	cd build 
+
+    cmake ..
+    cmake --build . 
+```
+this will generate executable .exe or lib(.lib/.a)
+
+## Say we have an executable which depends on a library and we have segregated library and executable code in different .h/.cpp
 add implementation to my_lib.h/.cpp
 
 ```bash
+#create library
 add_library(Library STATIC my_lib.cpp)
+
+#create executable
 add_executable(Executable learning.cpp)
+
+#but executable depends on library therefore link the library/ies to executable
 target_link_libraries(Executable PUBLIC Library)
 ```
 ## Move impl file group to separate folder (my_lib)
