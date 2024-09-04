@@ -1,7 +1,7 @@
 
 # CMake Step by Step
 
-## 01. Hello CMake
+## Hello CMake
 Let us assume we have just one implementation (.cpp).  The two basic things that is required for any project is 
 - CMake Version 
 - Project detail
@@ -22,7 +22,7 @@ project(CppCMakeLearning VERSION 1.0.0 LANGUAGES C CXX)
 
 add_executable(Executable hello_cmake.cpp)
 ```
-### 02. Build and generate executable/library
+### Build and generate executable/library
 Create Build directory, change directory to build and run cmake
 ```bash
     mkdir build
@@ -33,7 +33,7 @@ Create Build directory, change directory to build and run cmake
 ```
 this will generate executable .exe or lib(.lib/.a)
 
-## 03. When Executable depends on a library (or other implementation file) in same directory 
+## When Executable depends on a library (or other implementation file) in same directory 
 Suppose we have an executable which depends on a library and we have segregated library and executable code in different .h/.cpp
 add implementation to my_lib.h/.cpp
 
@@ -54,7 +54,7 @@ Sometimes you dont want a separate library file, you can do above in a single li
     add_executable(Executable 01_move_funcs_to_separate_files.cpp fun_lib.cpp)
 ```
 
-## 04. When Library code is in a separate folder (e.g. my_lib)
+## When Library code is in a separate folder (e.g. my_lib)
 - Create my_lib folder and add add_subdirectory(my_lib) in CMakeLists.txt of current directory
 - Go my_lib filder and create another CMakeLists.text file with below content
 ```bash
@@ -64,7 +64,7 @@ Sometimes you dont want a separate library file, you can do above in a single li
 Note: Every sub-diretory needs to have CMakeLists.txt. If a sub directory has just folders no source files.. add list of add_subdirectory(dir_name) to CMakeLists.txt.
 Executable will go to directory having file with main func
 
-## 05. When Headers/source files are kept in separate folder (e.g. src/ include/)
+## When Headers/source files are kept in separate folder (e.g. src/ include/)
 If headers/source are in separte folders say include/src folder, CMakeLists.txt from 'include' directory will have 
 ```bash
     target_include_directories(${LIBRARY_NAME} PUBLIC "./")
@@ -78,7 +78,7 @@ and  CMakeLists.txt from 'source'' will have
     target_link_libraries({EXE_NAME} PUBLIC {LIBRARY_NAME})
 ```
 
-## 06. Add Variables to CMakeLists.txt
+## Add Variables to CMakeLists.txt
 You can add project specific variables 
 ```bash
     set(EXECUTABLE_NAME Executable)
@@ -106,7 +106,7 @@ Many a times we have multiple headers/source files in folder and final library o
     add_library(${LIB_NAME} STATIC ${LIB_SRCS} ${LIB_HDRS})
     target_include_directories(${LIB_NAME} PUBLIC "./")
 ``` 
-## 07. Options in CMakeLists.txt
+## Options in CMakeLists.txt
 
 ```bash
     option(COMPILE_EXECUTABLE "Whether to compile the executable" ON) 
@@ -126,7 +126,7 @@ You can change option by editing CMakeLists.txt or while configuring from build 
     # cmake -DMY_OPTION=[ON|OFF] ..
 ```
 
-## 08. How to do automatic clean of build directory
+## How to do automatic clean of build directory (Unix only)
 - create MakeFile close to CMakeLists.txt and add below bash command with target
 ```bash
     prepare:
@@ -138,7 +138,7 @@ and run from command line
 ```bash
     make prepare
 ```
-## 09. How to build in Release/Debug mode? 
+## How to build in Release/Debug mode? 
 ```bash
     cd build
     # -D Works for variable name as well(besides options)
@@ -147,15 +147,15 @@ and run from command line
 Note: To debug, one can change variables/options temporarily in 'CMakeCache.txt'
 you can also get these variable/options value by searching "cmake cache" in command pallete(ctrl shift p)
 
-# 10. How to generate automatic headers
-create config.h.in (.in means file to be copied somewhere) in 'configured' folder and copy 
+## How to generate automatic headers
+create config.h.in (.in means file to be copied somewhere) in 'configured' folder and copy below code in 'CMakeLists.txt'. 
 ```bash 
     configure_file(
         "config.h.in"
         "${CMAKE_BINARY_DIR}/configured_files/include/config.h" ESCAPE_QUOTES
     )
 ```
-in 'CMakeLists.txt'. On configuration, config.h.in which has content to be copied and have some text to be replaced will be resulting config.h at 
+On configuration, config.h.in which has content to be copied and have some text to be replaced will be resulting config.h at 
 "build\configured_files\include\config.h"
 Please not text between @@ to be replaced based on project detail in CMakeLists.txt
 ```
