@@ -22,16 +22,28 @@ project(CppCMakeLearning VERSION 1.0.0 LANGUAGES C CXX)
 
 add_executable(Executable hello_cmake.cpp)
 ```
-### Build and generate executable/library
+### Build and generate executable/library : all or one
 Create Build directory, change directory to build and run cmake
 ```bash
     mkdir build
 	cd build 
 
     cmake ..
-    cmake --build . 
+    cmake --build . # this will generate all the libraries/Executables in the CMakeLists.txt
+
+    or 
+    cmake --build . --target Executable # Executable name 
+    cmake --build . --target Library    # library name 
 ```
-this will generate executable .exe or lib(.lib/.a)
+this will generate executable .exe or lib(.lib/.a).  In unix one can select target as below
+```bash
+    cd build
+    make Executable # builds only Executable 
+    make Library # builds only Library
+
+```
+
+
 
 ## When Executable depends on a library (or other implementation file) in same directory 
 Suppose we have an executable which depends on a library and we have segregated library and executable code in different .h/.cpp
