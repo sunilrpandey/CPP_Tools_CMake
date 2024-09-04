@@ -91,7 +91,21 @@ You are supposed to initialize various pre-defined cpp variables
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS        OFF)
 ```
+## Group Sources/Headers to build
+Many a times we have multiple headers/source files in folder and final library or executable wants few or all of these.
+```bash
+    set(LIB_SRCS
+            fun_lib1.cpp
+            fun_lib2.cpp)
 
+    set(LIB_HDRS
+            fun_lib1.h
+            fun_lib2.h)
+
+
+    add_library(${LIB_NAME} STATIC ${LIB_SRCS} ${LIB_HDRS})
+    target_include_directories(${LIB_NAME} PUBLIC "./")
+``` 
 ## 07. Options in CMakeLists.txt
 
 ```bash
@@ -104,14 +118,12 @@ How we use options:  Options can be used for conditional build
     if (COMPILE_EXECUTABLE)
         add_subdirectory(app)
     else()
-        message("Without exe compiling")
     endif()
 ```
 You can change option by editing CMakeLists.txt or while configuring from build folder
 ```bash
     cd build
     # cmake -DMY_OPTION=[ON|OFF] ..
-    cmake .. -DCOMPILE_EXECUTABLE=ON
 ```
 
 ## 08. How to do automatic clean of build directory
