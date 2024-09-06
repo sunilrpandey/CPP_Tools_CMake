@@ -8,13 +8,16 @@ set(LIB_NAME
 set(EXE_NAME
         "mathproj")
 
-add_subdirectory(mathlib)
+
+
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
+include(AddGitSubmodule)
+add_git_submodule(external/json)
+
 add_executable(${EXE_NAME} mathproj.cpp)
-target_link_libraries(${EXE_NAME} PUBLIC ${LIB_NAME})
+target_link_libraries(${EXE_NAME} PUBLIC
+    ${LIB_NAME}
+    nlohmann_json)
 
-#set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
-#include(AddGitSubmodule)
-
-#add_git_submodule(external/json)
-
-#add_subdirectory(external)
+add_subdirectory(mathlib)
+add_subdirectory(external)
