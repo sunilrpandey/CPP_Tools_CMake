@@ -286,3 +286,53 @@ As the code is connected at compile time there are not any additional run-time l
 - target_link_directories: Don’t use, give full paths instead (CMake 3.13+)
 - target_link_options: General link flags (CMake 3.13+)
 - target_sources: Add source files
+
+# How to show dependencies 
+```bash
+    cmake .. --graphviz=graph.dot
+    dot -Tpng graph.dot -o dependencyGraphImg.png
+```
+this will save image 
+
+# Use External library using FetchContent
+In order to use external library using FetchContent, external library should be cmakable library.
+Let me use gtest library our mathproj
+- Update CMakeLists.txt 
+```bash
+    include(FetchContent)
+
+    FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/heads/main.zip
+    )
+
+
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+    set(BUILD_GTEST ON CACHE BOOL "" FORCE)
+
+    FetchContent_MakeAvailable(googletest)
+
+    # and somewhere towards end of file add below lines
+    # here I am create test_mathproj file/executable to use gtest and mathlib
+
+
+    enable_testing()
+
+    add_executable(
+    test_mathproj
+    test_mathproj.cpp
+    )
+    target_link_libraries(
+        test_mathproj
+        GTest::gtest_main
+        mathlib
+    )
+
+    include(GoogleTest)
+    gtest_discover_tests(test_mathproj)
+```
+External libraries are cloned and build under build/_dep
+
+Some of the steps for cmake build can be found on library documentatoin, as in case of gtest one can go refere
+https://google.github.io/googletest/quickstart-cmake.html
