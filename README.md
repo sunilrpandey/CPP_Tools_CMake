@@ -28,23 +28,39 @@ Create Build directory, change directory to build and run cmake
     mkdir build
 	cd build 
 
-    cmake ..
+    cmake -S .. -B .    # Option 1
+    cmake ..            # Option 2
+    
+    #Specify Generator if required
+    cmake -S .. -B . -G "Unix Makefiles" # Option 1
+    cmake -S .. -B . -G "Visual Studio 16 2019" # Option 1
+
+    cmake .. -G "Unix Makefiles" # Option 2
+    cmake .. -G "Visual Studio 16 2019" # Option 2
+    
+    
     cmake --build . # this will generate all the libraries/Executables in the CMakeLists.txt
 
     or 
     cmake --build . --target Executable # Executable name 
     cmake --build . --target Library    # library name 
 ```
-this will generate executable .exe or lib(.lib/.a).  In unix one can select target as below
+If you have already built the cmake project, you can update with 
+```bash
+    cmake .
+```
+This will generate executable .exe or lib(.lib/.a).  In unix one can select target as below
 ```bash
     cd build
     make Executable # builds only Executable 
     make Library # builds only Library
-
 ```
 
-
-
+### Get the list of generator
+It might be required for build generation
+```bash
+    cmake --help
+```
 ## When Executable depends on a library (or other implementation file) in same directory 
 Suppose we have an executable which depends on a library and we have segregated library and executable code in different .h/.cpp
 add implementation to my_lib.h/.cpp
@@ -111,7 +127,8 @@ Many a times we have multiple headers/source files in folder and final library o
             fun_lib2.cpp)
 
     set(LIB_HDRS
-            fun_lib1.h
+            fun_lib1.h```
+
             fun_lib2.h)
 
 
@@ -170,7 +187,102 @@ create config.h.in (.in means file to be copied somewhere) in 'configured' folde
 On configuration, config.h.in which has content to be copied and have some text to be replaced will be resulting config.h at 
 "build\configured_files\include\config.h"
 Please not text between @@ to be replaced based on project detail in CMakeLists.txt
+```bash
+static constexpr std::int32_t project_version_major{@PROJECT_VERSION_MAJOR@};
+
+#string between @@ to be replaced from config file
 ```
-    static constexpr std::int32_t project_version_major{@PROJECT_VERSION_MAJOR@};
-    string between @@ to be replaced
+# How library linking works | PUBLIC/PRIVATE/INTERFACE
+Suppose we have threee libraries in CMakeLists.txt
+```bash
+    add_library(A ...)
+    add_library(B ...)
+    add_library(C ...)
 ```
+```cmake
+add_library(A ...)
+add_library(B ...)
+add_library(C ...)
+```
+
+### PUBLIC
+
+```cmake
+target_link_libraries(A PUBLIC B)
+target_link_libraries(C PUBLIC A)
+```
+
+When A links in B as *PUBLIC*, it says that A uses B in its implementation, and B is also used in A's public API. Hence, C can use B since it is part of the public API of A.
+
+### PRIVATE
+
+```cmake
+target_link_libraries(A PRIVATE B)
+target_link_libraries(C PRIVATE A)
+```
+
+When A links in B as *PRIVATE*, it is saying that A uses B in its
+implementation, but B is not used in any part of A's public API. Any code
+that makes calls into A would not need to refer directly to anything from
+B.
+
+### INTERFACE
+
+```cmake
+add_library(D INTERFACE)
+target_include_directories(D INTERFACE {CMAKE_CURRENT_SOURCE_DIR}/include)
+```
+
+In general, used for header-only libraries.
+
+# What are differnt Library types
+
+A binary file that contains information about code.
+A library cannot be executed on its own.
+An application utilizes a library.
+
+## Shared Libraries
+
+- Linux: \*.so
+- MacOS: \*.dylib
+- Windows: \*.dll
+
+Shared libraries reduce the amount of code that is duplicated in each program that makes use of the library, keeping the binaries small.
+
+Shared libraries will however have a small additional cost for the execution.
+In general the shared library is in the same directory as the executable.
+
+### Static Libraries
+
+- Linux/MacOS: *.a
+- Windows: *.lib
+
+Static libraries increase the overall size of the binary, but it means that you don't need to carry along a copy of the library that is being used.
+
+As the code is connected at compile time there are not any additional run-time loading costs.
+
+# Important CMake Variables for Paths
+
+- CMAKE_SOURCE_DIR
+  - Topmost folder (source directory) that contains a CMakeList.txt file.
+- PROJECT_SOURCE_DIR
+  - Contains the full path to the root of your project source directory.
+- CMAKE_CURRENT_SOURCE_DIR
+  - The directory where the currently processed CMakeLists.txt is located in.
+- CMAKE_CURRENT_LIST_DIR
+  - The directory of the listfile currently being processed. (for example a \*.cmake Module)
+- CMAKE_MODULE_PATH
+  - Tell CMake to search first in directories listed in CMAKE_MODULE_PATH when you use FIND_PACKAGE() or INCLUDE().
+- CMAKE_BINARY_DIR
+  - The filepath to the build directory
+
+# Things you can set on targets
+
+- target_link_libraries: Other targets; can also pass library names directly
+- target_include_directories: Include directories
+- target_compile_features: The compiler features you need activated, like cxx_std_11
+- target_compile_definitions: Definitions
+- target_compile_options: More general compile flags
+- target_link_directories: Don’t use, give full paths instead (CMake 3.13+)
+- target_link_options: General link flags (CMake 3.13+)
+- target_sources: Add source files
