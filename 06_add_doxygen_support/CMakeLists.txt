@@ -5,8 +5,12 @@ set(LIB_NAME
         "func_lib")
 
 set(EXE_NAME
-        "04_group_src_hdrs_to_build")
+        "06_add_doxygen_support")
+
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
+include(Docs)
+
+add_executable(${EXE_NAME} 06_add_doxygen_support.cpp)
+target_link_libraries(${EXE_NAME} PUBLIC ${LIB_NAME})
 
 add_subdirectory(libs)
-add_executable(${EXE_NAME} 04_group_src_hdrs_to_build.cpp)
-target_link_libraries(${EXE_NAME} PUBLIC ${LIB_NAME})

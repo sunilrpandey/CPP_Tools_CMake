@@ -2,8 +2,9 @@
 # CMake Step by Step
 
 ## Hello CMake
+
 Let us assume we have just one implementation (.cpp).  The two basic things that is required for any project is 
-- CMake Version 
+- CMake Version
 - Project detail
 ```bash
 cmake_minimum_required(VERSION 3.16)
@@ -336,3 +337,54 @@ External libraries are cloned and build under build/_dep
 
 Some of the steps for cmake build can be found on library documentatoin, as in case of gtest one can go refere
 https://google.github.io/googletest/quickstart-cmake.html
+
+
+# How to add doxygen support 
+
+- Update your source files with doxygen comments
+```bash
+    /**
+    * @brief Print Message for librar
+    *
+    */
+```
+
+- Install Doxygen
+- Create Doxygen file using below commond
+```bash
+    doxygen -g 
+```
+This will create default Doxygen file .. update fields as required specially project related information and input paths and what files to scan.
+(Please refer sample_Doxyfile)
+
+You can move this Doxygen file to docs/ for better placement and run 
+```bash 
+    doxygen 
+```
+It will create a html folder in docs/. look for index.html, right click and open in default browser to see documentation
+
+## How to automate in CMake
+Create a Cmake module Docs.cmake in ./cmake with below content
+```cmake
+find_package(Doxygen)
+
+if (DOXYGEN_FOUND)
+    message("..............Doxygen found...............")
+    add_custom_target(docs
+        COMMAND ${DOXYGEN_EXECUTABLE}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/docs
+        COMMENT "Generating HTML documentation with Doxygen"
+    )
+endif()
+```
+and you can use this module in CMakeLists.txt
+```cmake
+    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
+    include(Docs)
+```
+Now once you build app successfully. One can go to vscode command palette and search for 'Build Target' and run 'docs' target
+
+or run custom target created in Docs.cmake from command line to generate 'html' folder. open index.html in default browser to see your documentation
+```cmake 
+    cmake --build . --target docs
+```
