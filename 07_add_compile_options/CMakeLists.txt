@@ -7,10 +7,13 @@ set(LIB_NAME
 set(EXE_NAME
         "07_add_compile_options")
 
+<<<<<<< HEAD
 
 option(ENABLE_TESTING "Enable a Unit Testing" ON)
 
 
+=======
+>>>>>>> c85864bf6b71788469ebe903f2d4620cd282bce3
 #set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 #include(Docs)
 
