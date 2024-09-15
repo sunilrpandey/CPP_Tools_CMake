@@ -519,5 +519,66 @@ target_compile_definitions(EXE_NAME
 # target_compile_options: this is used for appending any most generic options/flag etc
 target_compile_options(EXE_NAME PRIVATE -Wall)
 ```
+# Sanitizer
+it is used finding probelems at run time
+- linter - before compiling
+- compiler - during compiling 
+- Sanitizer - run time 
+Set flag if you want sanitizer to run
+```cmake
+    option(ENABLE_SANITIZE_ADDR "Enable address sanitizer" ON)
+    option(ENABLE_SANITIZE_UNDEF "Enable undefined sanitizer" ON)
 
+    # and call cmake function 
+    if(ENABLE_SANITIZE_ADDR OR ENABLE_SANITIZE_UNDEF)
+        include(Sanitizer)
+        add_sanitizer_flags(ENABLE_SANITIZE_ADDR ENABLE_SANITIZE_UNDEF)
+    endif()
+```
+Write cmake function in sanitizer.cmake 
+```cmake
+function(add_sanitizer_flags enable_sanitize_addr enable_sanitize_undef)
+    if (NOT enable_sanitize_addr AND NOT enable_sanitize_undef)
+        message(STATUS "Sanitizers deactivated.")
+        return()
+    endif()
 
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        add_compile_options("-fno-omit-frame-pointer")
+        add_link_options("-fno-omit-frame-pointer")
+
+        if(enable_sanitize_addr)
+            add_compile_options("-fsanitize=address")
+            add_link_options("-fsanitize=address")
+        endif()
+
+        if(enable_sanitize_undef)
+            add_compile_options("-fsanitize=undefined")
+            add_link_options("-fsanitize=undefined")
+        endif()
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+        if(enable_sanitize_addr)
+            add_compile_options("/fsanitize=address")
+        endif()
+
+        if(enable_sanitize_undef)
+            message(STATUS "Undefined sanitizer not impl. for MSVC!")
+        endif()
+    else()
+        message(STATUS "Sanitizer not supported in this environment!")
+    endif()
+endfunction(add_sanitizer_flags)
+```
+You can create an issue in your file(say main file here) and run the exe to findout issue. array index issue in below example
+```cpp
+    //sanitizer demo : run the exe to view this issue
+    int arr[10];
+    arr[100]= 1234;
+```
+Below run time erro you will see here
+```cpp
+/07_add_compile_options/07_add_compile_options.cpp:12:12: runtime error: index 100 out of bounds for type 'int [10]'
+/07_add_compile_options/07_add_compile_options.cpp:12:13: runtime error: store to address 0x7ffd04c35630 with insufficient space for an object of type 'int'
+0x7ffd04c35630: note: pointer points here
+ fd 7f 00 00  00 00 00 00 00 00 00 00  ab 71 c3 04 fd 7f 00 00  bb 71 c3 04 fd 7f 00 00  0b 72 c3 04
+```/home/linus/work/git_space/cpp_tools_cmake

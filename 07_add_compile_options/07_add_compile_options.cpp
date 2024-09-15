@@ -6,7 +6,14 @@
 int main()
 {
 
-    int i; // to show warning
+    // warning demo
+    int i;
+
+
+    //sanitizer demo : run the exe to view this issue
+    int arr[10];
+    arr[100]= 1234;
+
     std::cout << "Demo : add compile options!" << std::endl;
     printMessage1();
     printMessage2();

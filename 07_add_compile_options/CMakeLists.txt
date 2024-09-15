@@ -14,6 +14,16 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 #include(Docs)
 include(Warnings)
 
+option(ENABLE_SANITIZE_ADDR "Enable address sanitizer" ON)
+option(ENABLE_SANITIZE_UNDEF "Enable undefined sanitizer" ON)
+
+# and call cmake function
+if(ENABLE_SANITIZE_ADDR OR ENABLE_SANITIZE_UNDEF)
+message("------Sanitizer is set---")
+    include(Sanitizer)
+    add_sanitizer_flags(ENABLE_SANITIZE_ADDR ENABLE_SANITIZE_UNDEF)
+endif()
+
 add_executable(${EXE_NAME} 07_add_compile_options.cpp)
 target_link_libraries(${EXE_NAME} PUBLIC ${LIB_NAME})
 
