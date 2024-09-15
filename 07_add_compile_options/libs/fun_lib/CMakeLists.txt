@@ -10,3 +10,12 @@ set(LIB_HDRS
 
 add_library(${LIB_NAME} STATIC ${LIB_SRCS} ${LIB_HDRS})
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+
+if (ENABLE_WARNINGS)
+    target_set_warnings(
+        ${LIB_NAME}
+        ON
+        OFF
+    )
+endif()

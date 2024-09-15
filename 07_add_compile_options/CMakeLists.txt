@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.23)
 project(CppCMakeLearning VERSION 1.0.0 LANGUAGES C CXX)
 
 set(LIB_NAME
@@ -7,17 +7,25 @@ set(LIB_NAME
 set(EXE_NAME
         "07_add_compile_options")
 
-<<<<<<< HEAD
-
-option(ENABLE_TESTING "Enable a Unit Testing" ON)
+option(ENABLE_WARNINGS "Enable a Unit Testing" OFF)
 
 
-=======
->>>>>>> c85864bf6b71788469ebe903f2d4620cd282bce3
-#set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 #include(Docs)
+include(Warnings)
 
 add_executable(${EXE_NAME} 07_add_compile_options.cpp)
 target_link_libraries(${EXE_NAME} PUBLIC ${LIB_NAME})
 
 add_subdirectory(libs)
+
+if (ENABLE_WARNINGS)
+    message("--- Warning enabled-----")
+    target_set_warnings(
+        ${EXE_NAME}
+        ON
+        ON
+    )
+endif()
+
+

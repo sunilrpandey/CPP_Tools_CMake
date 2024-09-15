@@ -8,6 +8,10 @@
 
 void printMessage1(){
 
+
+    int i;
+    std::cout << i;
+
     std::cout << "Messaging from lib1!!" << std::endl;
     return;
 }
