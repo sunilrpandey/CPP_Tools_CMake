@@ -498,5 +498,26 @@ As it is evident We can set compile options for a target (exe or library)
         )
     endif()
 ```
+# Target Compiler opitions
+```cmake 
+# target_compile_features: The compiler features defines very features such as language, architecture etc you need activated,  like cxx_std_11
+target_compile_features(mylib
+                        PUBLIC
+                        CXX_STD_11)
+```
+
+```cmake 
+#target_compile_definitions: Definitions of pre-processor macros etc or giving it some values
+target_compile_definitions(EXE_NAME 
+                            PRIVATE 
+                            ADD_DEBUG_PRINT=1
+                            DEBUG_ENABLED
+                        )
+```
+
+```cmake 
+# target_compile_options: this is used for appending any most generic options/flag etc
+target_compile_options(EXE_NAME PRIVATE -Wall)
+```
 
 
