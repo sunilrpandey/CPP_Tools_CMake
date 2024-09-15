@@ -581,4 +581,7 @@ Below run time erro you will see here
 /07_add_compile_options/07_add_compile_options.cpp:12:13: runtime error: store to address 0x7ffd04c35630 with insufficient space for an object of type 'int'
 0x7ffd04c35630: note: pointer points here
  fd 7f 00 00  00 00 00 00 00 00 00 00  ab 71 c3 04 fd 7f 00 00  bb 71 c3 04 fd 7f 00 00  0b 72 c3 04
-```/home/linus/work/git_space/cpp_tools_cmake
+```
+
+sanitizer options can be found from compiler documentation such as 
+https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html

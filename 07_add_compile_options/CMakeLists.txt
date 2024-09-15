@@ -24,6 +24,14 @@ message("------Sanitizer is set---")
     add_sanitizer_flags(ENABLE_SANITIZE_ADDR ENABLE_SANITIZE_UNDEF)
 endif()
 
+
+
+option(ENABLE_LTO "Enable LTO/IPO" ON)
+if(ENABLE_LTO)
+    include(LTO)
+endif()
+
+
 add_executable(${EXE_NAME} 07_add_compile_options.cpp)
 target_link_libraries(${EXE_NAME} PUBLIC ${LIB_NAME})
 
@@ -35,6 +43,14 @@ if (ENABLE_WARNINGS)
         ${EXE_NAME}
         ON
         ON
+    )
+endif()
+
+
+if (ENABLE_LTO)
+    target_enable_lto(
+        ${EXE_NAME}
+        ${ENABLE_LTO}
     )
 endif()
 
