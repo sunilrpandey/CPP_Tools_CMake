@@ -585,3 +585,87 @@ Below run time erro you will see here
 
 sanitizer options can be found from compiler documentation such as 
 https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html
+
+## Generator Expressions
+
+Using generator expressions one can configure the project differently for different build types in multi-configuration generators.
+For such generators the project is configured (with running cmake) once, but can be built for several build types after that.
+Example of such generators is Visual Studio.
+
+For multiconfiguration generators CMAKE_BUILD_TYPE is not known at configuration stage.
+Because of that using if-else switching doesn't work:
+
+```cmake
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options("/W4 /Wx")
+elif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_compile_options("/W4")
+endif()
+```
+
+But using conditional generator expressions works:
+
+```cmake
+add_compile_options(
+    $<$<CONFIG:Debug>:/W4 /Wx>
+    $<$<CONFIG:Release>:/W4>
+)
+```
+
+The Visual Studio, XCode and Ninja Multi-Config generators let you have more than one configuration in the same build directory, and thus won't be using the CMAKE_BUILD_TYPE cache variable.
+Instead the CMAKE_CONFIGURATION_TYPES cache variable is used and contains the list of configurations to use for this build directory.Generator Expressions
+Using generator expressions one can configure the project differently for different build types in multi-configuration generators. For such generators the project is configured (with running cmake) once, but can be built for several build types after that. Example of such generators is Visual Studio.
+
+For multiconfiguration generators CMAKE_BUILD_TYPE is not known at configuration stage. 
+__Because of that using if-else switching doesn't work:__
+```cmake 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options("/W4 /Wx")
+elif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_compile_options("/W4")
+endif()
+```
+But using conditional generator expressions works:
+```cmake
+add_compile_options(
+    $<$<CONFIG:Debug>:/W4 /Wx>
+    $<$<CONFIG:Release>:/W4>
+
+#this also works
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(EXE_NAME PUBLIC $<$<CONFIG:Debug>:/W4 /Wx>)
+elif (CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_options(EXE_NAME PUBLIC $<$<CONFIG:Debug>:/W4>)
+endif()
+)
+```
+
+## Cross Compilation with Toolchain Files
+
+## ARM 32 Cross
+
+```shell
+cmake -B build_arm32 -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/arm32-cross-toolchain.cmake
+cmake --build build_arm32 -j8
+```
+
+## ARM 32 Native
+
+```shell
+cmake -B build -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/arm32-native-toolchain.cmake
+cmake --build build -j8
+```
+
+## x86 64 MingW
+
+```shell
+cmake -B build_mingw -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/x86-64-mingw-toolchain.cmake
+cmake --build build_mingw -j8
+```
+
+## x86 64 Native
+
+```shell
+cmake -B build -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/x86-64-native-toolchain.cmake
+cmake --build build -j8
+```
